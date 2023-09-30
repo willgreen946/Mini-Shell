@@ -3,6 +3,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <errno.h>
+#include "sys/system.h"
 #include "commands.h"
 
 uint8_t mshell_command_exit (char *argv[]) {
@@ -50,7 +52,26 @@ uint8_t mshell_command_dir (char *argv[]) {
 	return 0;
 }
 
+/* Clears the console */
+uint8_t mshell_command_cls (char *argv[]) {
+	/* argv is ignored here */
+	fprintf(stdout, "\e[1;1H\e[2J");
+	return 0;
+}
+
+/* Copys a file or directory somewhere */
 uint8_t mshell_command_copy (char *argv[]) {
+	size_t argc;
+
+	for (argc = 0; *++argv; argc++)
+		;
+
+	// TODO
+	/* If argc cannot be divided by 2, cant copy to NULL */
+	if ((argc % 2) != 0) {
+		fprintf(stderr, "ERROR: Insufficent argc for call to copy!\n");
+		return 1;
+	}
 	return 0;
 }
 

@@ -7,6 +7,9 @@
 #include <dirent.h>
 #include <unistd.h>
 
+/* Clears the console */
+uint8_t mshell_command_cls (char *argv[]);
+
 /* Similar to 'ls' but it formats differently */
 uint8_t mshell_command_dir (char *argv[]);
 
