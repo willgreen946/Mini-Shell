@@ -3,8 +3,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
 #include <sys/wait.h>
-#include <pwd.h>
 
 #include "config.h"
 #include "commands.h"
@@ -14,17 +14,27 @@ struct MSHELL_COMMAND_MAP {
 	const char *command;
 };
 
-/* This is a map of the built in shell commands */ 
+/* This is a map of the built in shell commands */
 struct MSHELL_COMMAND_MAP mshell_command_map[] = {
 	{ mshell_command_cd, "cd" },
 	{ mshell_command_exit, "exit" },
+	{ mshell_command_dir, "dir" },
 };
+
+void mshell_signal_handler (int sig) {
+	switch (sig) {
+		case SIGKILL:
+			break;
+		case SIGSTOP:
+			break;
+	}
+}
 
 /* Goes through mshell_command_map until it shows NULL,
  * or finds an matching string to the command,
  * if it finds a match it will call the corresponding function */
 uint8_t mshell_run_built_in (char *argv[]) {
-	for (size_t k = 0; mshell_command_map[k].command; k++) 
+	for (size_t k = 0; mshell_command_map[k].command; k++)
 		if (!strcmp(mshell_command_map[k].command, argv[0])) {
 			mshell_command_map[k].function(argv);
 			return 0;
@@ -37,6 +47,8 @@ uint8_t mshell_exec (char *argv[]) {
 	int status;
 	uint8_t ret;
 	pid_t pid, wpid;
+
+	pid = wpid = ret = status = 0;
 
 	pid = fork();
 
@@ -59,7 +71,7 @@ uint8_t mshell_run_command (char *argv[]) {
 	uint8_t ret;
 
 	if (argv[0] == NULL)
-		return 0; /* Do nothing if nothing is passed */ 
+		return 0; /* Do nothing if nothing is passed */
 
 	if (!mshell_run_built_in(argv))
 		return 0;
@@ -69,7 +81,7 @@ uint8_t mshell_run_command (char *argv[]) {
 }
 
 /* Splits up string by whitespace and assigns words to argv array */
-void mshell_parse (char *argv[], char *string, size_t array_size) {
+void mshell_input_parse (char *argv[], char *string, size_t array_size) {
 	char **Pargv;
 
 	/* Splitting up string by whitespace */
@@ -84,13 +96,18 @@ void mshell_input_loop (void) {
 	char buf[256], *argv[256], *Pbuf;
 
 	for (;;) {
+		mshell_config_print_prompt();
+
+		if (signal(SIGINT, mshell_signal_handler) == SIG_ERR)
+			;
+
 		/* Grabbing user input and removing \n if any */
-		if (fgets(buf, 256, stdin) != NULL)
+		if (fgets(buf, 255, stdin) != NULL)
 			if ((Pbuf = strchr(buf, '\n')) != NULL)
 				*Pbuf = (char) 0;
 
 		/* Parse it to fill the argv array */
-		mshell_parse(argv, buf, 256);
+		mshell_input_parse(argv, buf, 256);
 
 		mshell_run_command(argv);
 	}
