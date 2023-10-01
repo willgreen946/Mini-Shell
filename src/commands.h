@@ -7,6 +7,11 @@
 #include <dirent.h>
 #include <unistd.h>
 
+char prev[256];
+
+/* Runs the last command */
+uint8_t mshell_command_last (char *argv[]);
+
 /* Clears the console */
 uint8_t mshell_command_cls (char *argv[]);
 

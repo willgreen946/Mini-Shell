@@ -93,6 +93,20 @@ void mshell_input_parse (char *argv[], char *string, size_t array_size) {
 				break;
 }
 
+/* Turns a string array into a single string */
+char *mshell_mono_str (char **argv) {
+	char *tmp = (char*)malloc(256);
+
+	while (*argv++) {
+		while (**argv++)
+			strncat(tmp, **&argv, 1);
+
+		strncat(tmp, " ", 1);
+	}
+
+	return tmp;
+}
+
 /* The main loop of the program */
 void mshell_input_loop (void) {
 	char buf[256], *argv[256], *Pbuf;
@@ -112,6 +126,8 @@ void mshell_input_loop (void) {
 		mshell_input_parse(argv, buf, 256);
 
 		mshell_run_command(argv);
+
+		prev_cmd = mshell_mono_str(argv);
 	}
 }
 

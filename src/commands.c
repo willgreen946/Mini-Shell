@@ -7,6 +7,16 @@
 #include "sys/system.h"
 #include "commands.h"
 
+char *prev_cmd;
+
+// TODO 
+uint8_t mshell_command_last (char *argv[]) {
+	/* Ignores arguments */
+	if (!prev_cmd)
+		return 1;
+	return 0;
+}
+
 uint8_t mshell_command_exit (char *argv[]) {
 	if (argv[1] != NULL)
 		exit(atoi(argv[1]));
@@ -27,7 +37,7 @@ uint8_t mshell_command_dir (char *argv[]) {
 		dp = opendir(*argv);
 
 		if (!dp) {
-			fprintf(stderr, "ERROR: Cannot open directory %s!\n", *argv);
+			fprintf(stderr, "ERROR: Cannot open directory %s\n", *argv);
 			return 0;
 		}
 
@@ -35,8 +45,15 @@ uint8_t mshell_command_dir (char *argv[]) {
 			switch (entry->d_type) {
 				case DT_DIR: fprintf(stdout, "DIR:\t"); break;
 				case DT_LNK: fprintf(stdout, "LINK:\t" ); break;
+				case DT_FIFO: fprintf(stdout, "PIPE:\t"); break;
+				case DT_CHR: fprintf(stdout, "CHAR:\t"); break;
+				case DT_BLK: fprintf(stdout, "BLOCK:\t"); break;
+				case DT_SOCK: fprintf(stdout, "SOCKET:\t"); break;
+				case DT_WHT: fprintf(stdout, "WHT:\t"); break;
 
 				case DT_UNKNOWN:
+				/* Fall through */
+				case DT_REG:
 				/* Fall through */
 				default: fprintf(stdout, "FILE:\t"); break;
 			}
