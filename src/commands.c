@@ -28,15 +28,18 @@ uint8_t mshell_command_exit (char *argv[]) {
 /* The same as ls command but formatted differently */
 uint8_t mshell_command_dir (char *argv[]) {
 	struct dirent *entry;
-	DIR *dp;
+	DIR *dp = NULL;
 
-	if (!argv[1])
+	if (argv[1] == NULL)
 		argv[1] = strndup(".", 1);
 
-	while (*++argv) {
+	while (*argv) {
+		if (*++argv == NULL)
+			break;
+
 		dp = opendir(*argv);
 
-		if (!dp) {
+		if (dp == NULL) {
 			fprintf(stderr, "ERROR: Cannot open directory %s\n", *argv);
 			return 0;
 		}
@@ -63,8 +66,6 @@ uint8_t mshell_command_dir (char *argv[]) {
 
 		closedir(dp);
 	}
-
-	if (dp) closedir(dp);
 
 	return 0;
 }
