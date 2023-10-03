@@ -8,7 +8,7 @@ uint8_t mshell_command_dir (char *argv[]) {
 	DIR *dp = NULL;
 
 	if (argv[1] == NULL)
-		argv[1] = strndup(".", 1);
+		return 1;
 
 	while (*argv) {
 		if (*++argv == NULL)
@@ -17,9 +17,11 @@ uint8_t mshell_command_dir (char *argv[]) {
 		dp = opendir(*argv);
 
 		if (dp == NULL) {
-			fprintf(stderr, "ERROR: Canno't open directory %s\n", *argv);
+			fprintf(stderr, "ERROR: Cannot open directory %s\n", *argv);
 			return 1;
 		}
+
+		fprintf(stdout, "WD:\t%s\n", *argv);
 
 		while ((entry = readdir(dp))) {
 			switch (entry->d_type) {

@@ -2,17 +2,24 @@
 #include <stdlib.h>
 #include <dirent.h>
 
-uint8_t mshell_command_copy (char *argv[]) {
+/* Gets the amount of elements of an array (argc) */
+size_t mshell_command_copy_get_argc (char *argv[]) {
 	size_t argc;
+	for (argc = 0; *++argv; argc++);
+	return argc;
+}
 
-	/* Get the arg count */
-	for (argc = 0; *++argv; argc++)
-		;
+uint8_t mshell_command_copy (char *argv[]) {
+	size_t lc = 0; /* The amount of time we need to loop */
+	size_t argc = mshell_command_copy_get_argc(argv);
 
-	if ((argc % 2) != 0) {
-		fprintf(stderr, "ERROR: Insufficient arg count for a call t copy");
+	if ((lc = (argc % 2)) != 0) {
+		fprintf(stderr, "ERROR: Insufficient arg count for a call to copy!\n");
 		return 1;
 	}
 
+	while (*argv) {
+
+	}
 	return 0;
 }
