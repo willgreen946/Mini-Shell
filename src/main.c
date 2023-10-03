@@ -7,7 +7,7 @@
 #include <sys/wait.h>
 
 #include "config.h"
-#include "commands.h"
+#include "commands/commands.h"
 
 struct MSHELL_COMMAND_MAP {
 	uint8_t (*function)(char *argv[]);
@@ -21,6 +21,7 @@ struct MSHELL_COMMAND_MAP mshell_command_map[] = {
 	{ mshell_command_dir, "dir" },
 	{ mshell_command_copy, "copy" },
 	{ mshell_command_cls, "cls" },
+	{ mshell_command_last, "!!" },
 };
 
 void mshell_signal_handler (int sig) {
