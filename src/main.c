@@ -18,8 +18,6 @@ struct MSHELL_COMMAND_MAP {
 struct MSHELL_COMMAND_MAP mshell_command_map[] = {
 	{ mshell_command_cd, "cd" },
 	{ mshell_command_exit, "exit" },
-	{ mshell_command_dir, "dir" },
-	{ mshell_command_copy, "copy" },
 	{ mshell_command_cls, "cls" },
 	{ mshell_command_last, "!!" },
 };
